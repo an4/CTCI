@@ -76,95 +76,95 @@ class ArraysAndStrings {
             }
         }
         return new String(array);
-     }
+    }
 
-     /**
-      * 1.4
-      * Palindrome Permutation: Given a string, write a function to check if it is a permutation
-      * of a palindrome. A palindrome is a word or a phrase is the same forwards and backwards.
-      * A permutation is a rearrangement of letters. The palindrome does not need to be limited
-      * to just dictionary words.
-      * EXAMPLE
-      * Input: Tact Coa
-      * Output: True (permutations: "taco cat", "atco cta", etc.)
-      */
-     public static boolean palindromePermutation(String input) {
-         HashSet<Character> set = new HashSet<Character>();
-         boolean all_spaces = true;
-         input = input.toLowerCase();
-         for(int i=0; i<input.length(); i++) {
-             if(!Character.isLetter(input.charAt(i))) {
-                 continue;
-             }
-             all_spaces = false;
-             if(set.contains(input.charAt(i))) {
-                 set.remove(input.charAt(i));
-             } else {
-                 set.add(input.charAt(i));
-             }
-         }
-         if(set.size() < 2 && !all_spaces) {
-             return true;
-         }
-         return false;
-     }
+    /**
+     * 1.4
+     * Palindrome Permutation: Given a string, write a function to check if it is a permutation
+     * of a palindrome. A palindrome is a word or a phrase is the same forwards and backwards.
+     * A permutation is a rearrangement of letters. The palindrome does not need to be limited
+     * to just dictionary words.
+     * EXAMPLE
+     * Input: Tact Coa
+     * Output: True (permutations: "taco cat", "atco cta", etc.)
+     */
+    public static boolean palindromePermutation(String input) {
+        HashSet<Character> set = new HashSet<Character>();
+        boolean all_spaces = true;
+        input = input.toLowerCase();
+        for(int i=0; i<input.length(); i++) {
+            if(!Character.isLetter(input.charAt(i))) {
+                continue;
+            }
+            all_spaces = false;
+            if(set.contains(input.charAt(i))) {
+                set.remove(input.charAt(i));
+            } else {
+                set.add(input.charAt(i));
+            }
+        }
+        if(set.size() < 2 && !all_spaces) {
+            return true;
+        }
+        return false;
+    }
 
-     /**
-      * 1.5
-      * One Away: There are three types of edits that can be perofrmed on strings:
-      * insert a character, remove a character, or replace a character. Given two strings,
-      * write a function to check if they are one edit (or zero edits) away.
-      */
-     public static boolean oneAway(String a, String b) {
-         // Replace
-         if(a.length() == b.length()) {
-             int diff = 0;
-             for(int i=0; i<a.length(); i++) {
-                 if(a.charAt(i) != b.charAt(i)) {
-                     diff++;
-                 }
-                 if(diff > 1) {
-                     return false;
-                 }
-             }
-             return true;
-         }
-         // Insert
-         if(a.length() + 1 == b.length()) {
-             int index_a = 0;
-             int index_b = 0;
-             while(index_a < a.length() && index_b < b.length()) {
-                 if(a.charAt(index_a) == b.charAt(index_b)) {
-                     index_a++;
-                     index_b++;
-                 } else {
-                     if(index_a != index_b) {
-                         return false;
-                     }
-                     index_a++;
-                 }
-             }
-             return true;
-         }
-         // Remove
-         if(a.length()-1 == b.length()) {
-             int index_a = 0;
-             int index_b = 0;
-             while(index_a < a.length() && index_b < b.length()) {
-                 if(a.charAt(index_a) == b.charAt(index_b)) {
-                     index_a++;
-                     index_b++;
-                 } else {
-                     if(index_a != index_b) {
-                         return false;
-                     }
-                     index_b++;
-                 }
-             }
-             return true;
-         }
-         return false;
-     }
+    /**
+     * 1.5
+     * One Away: There are three types of edits that can be perofrmed on strings:
+     * insert a character, remove a character, or replace a character. Given two strings,
+     * write a function to check if they are one edit (or zero edits) away.
+     */
+    public static boolean oneAway(String a, String b) {
+        // Replace
+        if(a.length() == b.length()) {
+            int diff = 0;
+            for(int i=0; i<a.length(); i++) {
+                if(a.charAt(i) != b.charAt(i)) {
+                    diff++;
+                }
+                if(diff > 1) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        // Insert
+        if(a.length() + 1 == b.length()) {
+            int index_a = 0;
+            int index_b = 0;
+            while(index_a < a.length() && index_b < b.length()) {
+                if(a.charAt(index_a) == b.charAt(index_b)) {
+                    index_a++;
+                    index_b++;
+                } else {
+                    if(index_a != index_b) {
+                        return false;
+                    }
+                    index_a++;
+                }
+            }
+            return true;
+        }
+        // Remove
+        if(a.length()-1 == b.length()) {
+            int index_a = 0;
+            int index_b = 0;
+            while(index_a < a.length() && index_b < b.length()) {
+                if(a.charAt(index_a) == b.charAt(index_b)) {
+                    index_a++;
+                    index_b++;
+                } else {
+                    if(index_a != index_b) {
+                        return false;
+                    }
+                    index_b++;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
      /**
       * 1.6
@@ -174,16 +174,36 @@ class ArraysAndStrings {
       * string, your method should return the original string. You can assume the string
       * has only uppercase and lowercase letters (a-z).
       */
-     public static String stringCompression(String input) {
-         return input;
-     }
+    public static String stringCompression(String input) {
+        StringBuilder br = new StringBuilder();
+        int count = 1;
+        char current = input.charAt(0);
+        br.append(current);
+        for(int i=1; i<input.length(); i++) {
+            if(current == input.charAt(i)) {
+                count++;
+            } else {
+                br.append(count);
+                current = input.charAt(i);
+                br.append(current);
+                count = 1;
+            }
+        }
+        br.append(count);
+        if(br.length() >= input.length()) {
+            return input;
+        }
+        return br.toString();
+    }
 
     /**
      * 1.7
      * Rotate Matrix: Given an image represented by an NxN matrix, where each ixel in the image is
      * 4 bytes, write a method to rotate the image by 90 degrees. Can you do this in place?
      */
+    private static int[][] rotateMatix(int[][] matrix) {
 
+    }
 
     /**
      * 1.8
@@ -202,9 +222,7 @@ class ArraysAndStrings {
 
 
     public static void main(String[] args) {
-        System.out.println(oneAway("a", "ab"));
-        System.out.println(oneAway("a", "abc"));
-        System.out.println(oneAway("a", "b"));
-        System.out.println(oneAway("aa", "bb"));
+        System.out.println(stringCompression("aaabbb"));
+        System.out.println(stringCompression("ab"));
     }
 }
