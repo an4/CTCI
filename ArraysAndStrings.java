@@ -201,8 +201,30 @@ class ArraysAndStrings {
      * Rotate Matrix: Given an image represented by an NxN matrix, where each ixel in the image is
      * 4 bytes, write a method to rotate the image by 90 degrees. Can you do this in place?
      */
-    private static int[][] rotateMatix(int[][] matrix) {
+    private static void rotateMatrix(int[][] matrix) {
+        int n = matrix.length;
+        for(int i=0; i<n/2; i++) {
+            for(int j=i; j<n-i-1; j++) {
+                int offset = j - i;
+                int temp = matrix[i][j];
+                matrix[i][j] = matrix[n-i-1-offset][i];
+                matrix[n-i-1-offset][i] = matrix[n-i-1][n-i-1-offset];
+                matrix[n-i-1][n-i-1-offset] = matrix[j][n-i-1];
+                matrix[j][n-i-1] = temp;
+            }
+        }
+        printMatrix(matrix);
+    }
 
+    private static void printMatrix(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        for(int i=0; i<n; i++) {
+            for(int j=0; j<m; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     /**
@@ -210,19 +232,62 @@ class ArraysAndStrings {
      * Zero Matrix: Write an algorithm such that if an element iin an MxN matrix is 0, its entire
      * row and clolumn are set to 0.
      */
+    private static void zeroMatrix(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
 
+        int[] row = new int[n];
+        int[] col = new int[m];
+
+        for(int i=0; i<n; i++) {
+            for(int j=0; j<m; j++) {
+                if(matrix[i][j] == 0) {
+                    row[i] = 1;
+                    col[j] = 1;
+                }
+            }
+        }
+
+        // Rows
+        for(int i=0; i<n; i++) {
+            if(row[i] == 1) {
+                for(int j=0; j<m; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+
+        // Columns
+        for(int i=0; i<m; i++) {
+            if(col[i] == 1) {
+                for(int j=0; j<n; j++) {
+                    matrix[j][i] = 0;
+                }
+            }
+        }
+
+        printMatrix(matrix);
+    }
 
     /**
      * 1.9
      * String Rotation: Assume you have a methos isSubstring which checks if one word is a substring
-     * of another. Given two strings, s1 and s2, write code to check if s2 is a rotation og s1 using
+     * of another. Given two strings, s1 and s2, write code to check if s2 is a rotation of s1 using
      * only one call to isSubstring *e.g., "waterbottle" is a rotation of "erbottlewat").
      */
-
-
+    private static boolean stringRotation(String s1, String s2) {
+        String s1s1 = s1 + s1;
+        if(s1s1.contains(s2)) {
+            return true;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
-        System.out.println(stringCompression("aaabbb"));
-        System.out.println(stringCompression("ab"));
+        int[][] testMatrix = {{0,1,2},{3,4,5},{6,7,8}};
+
+        // rotateMatrix(testMatrix);
+
+        zeroMatrix(testMatrix);
     }
 }
