@@ -200,17 +200,27 @@ public class LinkedLists {
         return sum;
     }
 
+    // FOLLOW UP
+
     private static int getListLength(Node list) {
-        Node temp = list;
         int length = 0;
-        while(temp != null) {
+        while(list != null) {
             length++;
-            temp = temp.next;
+            list = list.next;
         }
         return length;
     }
 
-    // FOLLOW UP
+    private static boolean allZeros(Node list) {
+        while(list != null) {
+            if(list.data != 0) {
+                return false;
+            }
+            list = list.next;
+        }
+        return true;
+    }
+
     private static Node sumLists2(Node a, Node b) {
         int length_a = getListLength(a);
         int length_b = getListLength(b);
@@ -224,8 +234,27 @@ public class LinkedLists {
             length_b++;
         }
 
-        int carry = 0;
+        while(!allZeros(b)) {
+            Node head_a = a;
+            Node head_b = b;
+            while(a!=null && b!=null) {
+                int temp = b.data + a.data;
+                a.data = temp%10;
+                b.data = temp/10;
+                a = a.next;
+                b = b.next;
+            }
+            head_a = head_a.prepend(0);
+            head_b.append(0);
+            a = head_a;
+            b = head_b;
+        }
 
+        while(a != null && a.data == 0) {
+            a = a.next;
+        }
+        printList(a);
+        return a;
     }
 
     /**
@@ -252,7 +281,7 @@ public class LinkedLists {
      * Input A->B->C->D->E->C [the same C as earlier]
      * Output C
      */
-    
+
 
     public static void main(String[] args) {
         Node a = new Node(7);
@@ -263,6 +292,6 @@ public class LinkedLists {
         b.append(9);
         b.append(2);
 
-        Node sum = sumLists(a, b);
+        Node sum = sumLists2(a, b);
     }
 }
