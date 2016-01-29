@@ -157,19 +157,112 @@ public class LinkedLists {
      * Output 9->1->2. That is, 912.
      */
     private static Node sumLists(Node a, Node b) {
-        
+        Node sum = null;
+        int carry = 0;
+        while(a != null && b != null) {
+            int value = (a.data + b.data + carry)%10;
+            carry = (a.data + b.data + carry)/10;
+            if(sum == null) {
+                sum = new Node(value);
+            } else {
+                sum.append(value);
+            }
+            a = a.next;
+            b = b.next;
+        }
+
+        while(a != null) {
+            if(carry != 0) {
+                sum.append(a.data + carry);
+                carry = 0;
+            } else {
+                sum.append(a.data);
+            }
+            a = a.next;
+        }
+
+        while(b != null) {
+            if(carry != 0) {
+                sum.append(b.data + carry);
+                carry = 0;
+            } else {
+                sum.append(b.data);
+            }
+            b = b.next;
+        }
+
+        if(carry != 0) {
+            sum.append(carry);
+        }
+
+        printList(sum);
+
+        return sum;
     }
 
+    private static int getListLength(Node list) {
+        Node temp = list;
+        int length = 0;
+        while(temp != null) {
+            length++;
+            temp = temp.next;
+        }
+        return length;
+    }
+
+    // FOLLOW UP
+    private static Node sumLists2(Node a, Node b) {
+        int length_a = getListLength(a);
+        int length_b = getListLength(b);
+
+        while(length_a < length_b) {
+            a = a.prepend(0);
+            length_a++;
+        }
+        while(length_b < length_a) {
+            b = b.prepend(0);
+            length_b++;
+        }
+
+        int carry = 0;
+
+    }
+
+    /**
+     * 2.6
+     * Palindrome: Implement a function to check if a linked list is a palindrome.
+     */
+
+    /**
+     * 2.7
+     * Intersection: Given two (singly) linked lists, determine if the two lists intersect. Return
+     * the interecting node. Note that the intersection is defined based on reference, not value.
+     * That is, if the kth node of the first linked list is the exact same node (by reference) as
+     * the jth node of the second linked list, then they are intersecting.
+     */
+
+    /**
+     * 2.8
+     * Loop Detection: Given a circular linked list, implement an algorithm that returns the node
+     * at the beginning of the loop.
+     * DEFINITION
+     * Circular linked list: A (corrupt) linked list in which a node's next pointer points to an
+     * earlier node, so as to make a loop in the linked list.
+     * EXAMPLE
+     * Input A->B->C->D->E->C [the same C as earlier]
+     * Output C
+     */
+    
 
     public static void main(String[] args) {
-        Node list = new Node(7);
-        list.append(1);
-        list.append(222);
-        list.append(0);
-        list.append(4);
-        list.append(5);
-        printList(list);
-        list = partition(list, 5);
-        // removeDups2(list);
+        Node a = new Node(7);
+        a.append(1);
+        a.append(6);
+
+        Node b = new Node(5);
+        b.append(9);
+        b.append(2);
+
+        Node sum = sumLists(a, b);
     }
 }
