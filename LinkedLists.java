@@ -261,6 +261,30 @@ public class LinkedLists {
      * 2.6
      * Palindrome: Implement a function to check if a linked list is a palindrome.
      */
+    public static Node reverseList(Node list) {
+        Node head = null;
+        while(list != null) {
+            if(head == null) {
+                head = new Node(list.data);
+            } else {
+                head = head.prepend(list.data);
+            }
+            list = list.next;
+        }
+        return head;
+    }
+
+    public static boolean palindrome(Node list) {
+        Node reverse = reverseList(list);
+        while(reverse != null && list!= null) {
+            if(reverse.data != list.data) {
+                return false;
+            }
+            reverse = reverse.next;
+            list = list.next;
+        }
+        return true;
+    }
 
     /**
      * 2.7
@@ -269,6 +293,8 @@ public class LinkedLists {
      * That is, if the kth node of the first linked list is the exact same node (by reference) as
      * the jth node of the second linked list, then they are intersecting.
      */
+    
+
 
     /**
      * 2.8
@@ -292,6 +318,13 @@ public class LinkedLists {
         b.append(9);
         b.append(2);
 
-        Node sum = sumLists2(a, b);
+        Node c = new Node(0);
+        c.append(1);
+        c.append(2);
+        c.append(2);
+        c.append(0);
+        System.out.println(palindrome(c));
+
+        // Node sum = sumLists2(a, b);
     }
 }
