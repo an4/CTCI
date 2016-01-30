@@ -293,8 +293,23 @@ public class LinkedLists {
      * That is, if the kth node of the first linked list is the exact same node (by reference) as
      * the jth node of the second linked list, then they are intersecting.
      */
-    
-
+    private static Node intersection(Node a, Node b) {
+        int length_a = getListLength(a);
+        int length_b = getListLength(b);
+        while(length_a < length_b) {
+            b = b.next;
+            length_b--;
+        }
+        while(length_a > length_b) {
+            a = a.next;
+            length_a--;
+        }
+        while(a != null && b!= null && a != b) {
+            a = a.next;
+            b = b.next;
+        }
+        return a;
+    }
 
     /**
      * 2.8
@@ -307,7 +322,28 @@ public class LinkedLists {
      * Input A->B->C->D->E->C [the same C as earlier]
      * Output C
      */
-
+     public static Node loopDetection(Node list) {
+        Node slow = list;
+        Node fast = list;
+        slow = slow.next;
+        fast = fast.next.next;
+        while(fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if(slow != fast) {
+                break;
+            }
+        }
+        if(fast == null || fast.next == null) {
+            return null;
+        }
+        slow = list;
+        while(slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+     }
 
     public static void main(String[] args) {
         Node a = new Node(7);
@@ -318,12 +354,16 @@ public class LinkedLists {
         b.append(9);
         b.append(2);
 
-        Node c = new Node(0);
-        c.append(1);
-        c.append(2);
-        c.append(2);
-        c.append(0);
-        System.out.println(palindrome(c));
+        // Node c = new Node(0);
+        // c.append(1);
+        // c.append(2);
+        // c.append(2);
+        // c.append(0);
+        // System.out.println(palindrome(c));
+
+        a.next.next.next=b;
+        Node x = intersection(a, b);
+        System.out.println(x.data);
 
         // Node sum = sumLists2(a, b);
     }
