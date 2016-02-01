@@ -22,7 +22,7 @@ class Queue {
             last = new Node(data);
             first = last;
         } else {
-            last.next = new Node(item);
+            last.next = new Node(data);
             last = last.next;
         }
     }
@@ -42,6 +42,9 @@ public class StacksAndQueues {
      * 3.1
      * Threee in One: Describe how you could use a single array to implement three stacks.
      */
+    public static void threeInOne() {
+        
+    }
 
     /**
      * 3.2
