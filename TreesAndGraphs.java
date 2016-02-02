@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 class Tree {
     Tree left;
@@ -53,37 +54,51 @@ class Tree {
 class Graph {
     class GNode {
         Integer name;
-        private ArrayList<Integer> adjacencyList = new ArrayList<Integer>();
+        private HashSet<Integer> adjacencyList = new HashSet<Integer>();
 
         public GNode(Integer name) {
             this.name = name;
             this.adjacencyList = null;
         }
 
-        public addEdge(Integer node) {
+        public void addEdge(Integer node) {
             if(!adjacencyList.contains(node)) {
                 adjacencyList.add(node);
+            }
+        }
+
+        public void removeEdge(Integer node) {
+            if(adjacencyList.contains(node)) {
+                adjacencyList.remove(node);
             }
         }
     }
 
     HashMap<Integer, GNode> nodes = new HashMap<Integer, GNode>();
 
-    public addNode(Integer node_name) {
+    public void addNode(Integer node_name) {
         GNode node = new GNode(node_name);
         nodes.put(node_name, node);
     }
 
-    public addEdgeBoth(Integer a, Integer b) {
-        Node node_a = nodes.get(a);
-        node_a.addEdge(b);
-        Node node_b = nodes.get(b);
-        node_b.addEdge(a);
+    public void addEdgeBoth(Integer a, Integer b) {
+        this.addEdge(a, b);
+        this.addEdge(b, a);
     }
 
-    public addEdge(Integer a, Integer b) {
-        Node node_a = nodes.get(a);
+    public void addEdge(Integer a, Integer b) {
+        GNode node_a = nodes.get(a);
         node_a.addEdge(b);
+    }
+
+    public void removeEdgeBoth(Integer a, Integer b) {
+        this.removeEdge(a, b);
+        this.removeEdge(b, a);
+    }
+
+    public void removeEdge(Integer a, Integer b) {
+        GNode node_a = nodes.get(a);
+        node_a.removeEdge(b);
     }
 }
 
@@ -128,7 +143,7 @@ public class TreesAndGraphs {
 
         while(queue.size() != 0) {
             Integer current = queue.remove();
-            
+
 
         }
     }
