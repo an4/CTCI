@@ -51,29 +51,30 @@ class Tree {
     }
 }
 
-class Graph {
-    class GNode {
-        Integer name;
-        private HashSet<Integer> adjacencyList = new HashSet<Integer>();
+class GNode {
+    Integer name;
+    private HashSet<Integer> adjacencyList = new HashSet<Integer>();
 
-        public GNode(Integer name) {
-            this.name = name;
-            this.adjacencyList = null;
-        }
+    public GNode(Integer name) {
+        this.name = name;
+    }
 
-        public void addEdge(Integer node) {
-            if(!adjacencyList.contains(node)) {
-                adjacencyList.add(node);
-            }
-        }
+    public void addEdge(Integer node) {
+        this.adjacencyList.add(node);
+    }
 
-        public void removeEdge(Integer node) {
-            if(adjacencyList.contains(node)) {
-                adjacencyList.remove(node);
-            }
+    public void removeEdge(Integer node) {
+        if(this.adjacencyList.contains(node)) {
+            this.adjacencyList.remove(node);
         }
     }
 
+    public HashSet<Integer> getNeighbours() {
+        return this.adjacencyList;
+    }
+}
+
+class Graph {
     HashMap<Integer, GNode> nodes = new HashMap<Integer, GNode>();
 
     public void addNode(Integer node_name) {
@@ -87,8 +88,10 @@ class Graph {
     }
 
     public void addEdge(Integer a, Integer b) {
-        GNode node_a = nodes.get(a);
-        node_a.addEdge(b);
+        if(this.nodes.containsKey(a)) {
+            GNode node_a = this.nodes.get(a);
+            node_a.addEdge(b);
+        }
     }
 
     public void removeEdgeBoth(Integer a, Integer b) {
@@ -133,21 +136,46 @@ public class TreesAndGraphs {
         System.out.println(tree.data);
     }
 
-    public static void BFS(Graph graph, Integer start) {
+    public static void BFS(Graph graph) {
         HashSet<Integer> visited = new HashSet<Integer>();
         LinkedList<Integer> queue = new LinkedList<Integer>();
-
-        // Add start node to queue + mark it as visited
-        visited.add(start);
+        Integer start = 0;
+        System.out.println("Breadth-First Search:");
         queue.add(start);
+        visited.add(start);
 
         while(queue.size() != 0) {
             Integer current = queue.remove();
-
-
+            System.out.println(current);
+            for(Integer n: graph.nodes.keySet()) {
+                if(!visited.contains(n)) {
+                    queue.add(n);
+                    visited.add(n);
+                }
+            }
         }
     }
 
+    public static void DFSsearch(Integer node, HashSet<Integer> visited, Graph graph) {
+        if(node == null) {
+            return;
+        }
+        System.out.println(node);
+        visited.add(node);
+        GNode n = graph.nodes.get(node);
+        for(Integer adj: n.getNeighbours()) {
+            if(!visited.contains(adj)) {
+                DFSsearch(adj, visited, graph);
+            }
+        }
+    }
+
+    public static void DFS(Graph graph) {
+        HashSet<Integer> visited = new HashSet<Integer>();
+        Integer start = 0;
+        System.out.println("Depth-First Search:");
+        DFSsearch(0, visited, graph);
+    }
 
     /**
      *
@@ -177,5 +205,28 @@ public class TreesAndGraphs {
         System.out.println("Post-order traversal");
         postOrder(tree);
 
+        /**
+         * Test graph
+         *
+         *
+         */
+        Graph graph = new Graph();
+        graph.addNode(0);
+        graph.addNode(1);
+        graph.addNode(2);
+        graph.addNode(3);
+        graph.addNode(4);
+        graph.addNode(5);
+        graph.addEdge(0,1);
+        graph.addEdge(0,4);
+        graph.addEdge(0,5);
+        graph.addEdge(1,4);
+        graph.addEdge(1,3);
+        graph.addEdge(2,1);
+        graph.addEdge(3,2);
+        graph.addEdge(3,4);
+
+        DFS(graph);
+        BFS(graph);
     }
 }
