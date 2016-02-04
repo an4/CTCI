@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -147,7 +148,7 @@ public class TreesAndGraphs {
         while(queue.size() != 0) {
             Integer current = queue.remove();
             System.out.println(current);
-            for(Integer n: graph.nodes.keySet()) {
+            for(Integer n: graph.nodes.get(current).getNeighbours()) {
                 if(!visited.contains(n)) {
                     queue.add(n);
                     visited.add(n);
@@ -178,8 +179,170 @@ public class TreesAndGraphs {
     }
 
     /**
-     *
+     * 4.1
+     * Route Between Nodes: Given a directed graph, design an algorithm to find out whether there is
+     * a route between two nodes.
      */
+    private static boolean routeBetweenNodes(Graph graph, Integer a, Integer b) {
+        HashSet<Integer> visited = new HashSet<Integer>();
+        LinkedList<Integer> queue = new LinkedList<Integer>();
+
+        queue.add(a);
+        visited.add(a);
+
+        while(queue.size() != 0) {
+            int current = queue.remove();
+            for(Integer n: graph.nodes.get(current).getNeighbours()) {
+                if(!visited.contains(n)) {
+                    visited.add(n);
+                    queue.add(n);
+                    if(n == b) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 4.2
+     * Minimal Tree: Given a sorted (increading order) array with unique integer elements, write an
+     * algorithm to create a binary search tree with minimal height.
+     */
+    private static Tree makeMiddleRoot(int[] arr, int start, int end) {
+        if(start > end) {
+            return null;
+        }
+        int middle = (start+end)/2;
+        Tree tree = new Tree(arr[middle]);
+        tree.left = makeMiddleRoot(arr, start, middle-1);
+        tree.right = makeMiddleRoot(arr, middle+1, end);
+        return tree;
+    }
+
+    private static Tree minimalTree(int[] arr) {
+        return makeMiddleRoot(arr, 0, arr.length-1);
+    }
+
+    /**
+     * 4.3
+     * List of Depths: Given a binary tree, design an algorithm which creates a linked list of all
+     * the nodes at each depth (e.g., if you have a tree with depth D, you'll create D linked lists)
+     */
+    private static ArrayList<LinkedList<Tree>> listOfDepths(Tree tree) {
+        ArrayList<LinkedList<Tree>> output = new ArrayList<LinkedList<Tree>>();
+        // Add root to queue
+        LinkedList<Tree> list = new LinkedList<Tree>();
+        list.add(tree);
+        output.add(list);
+
+        while(list.size() != 0) {
+            LinkedList<Tree> next = new LinkedList<Tree>();
+            for(Tree current : list) {
+                if(current.left != null) {
+                    next.add(current.left);
+                }
+                if(current.right != null) {
+                    next.add(current.right);
+                }
+            }
+            if(next.size() > 0) {
+                output.add(next);
+            }
+            list = next;
+        }
+        return output;
+    }
+
+    private static void test_listOfDepths() {
+        int[] arr = {0,1,2,3,4,5,6};
+
+        Tree tree = minimalTree(arr);
+
+        ArrayList<LinkedList<Tree>> list = listOfDepths(tree);
+
+        for(LinkedList<Tree> l : list) {
+            for(Tree el: l) {
+                System.out.print(el.data + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * 4.4
+     * Check Balanced: Implement a function to check if a bunary tree is balanced. For the purpose
+     * of this question, a balanced tree is defined to be a tree such that the heights of the two
+     * subtrees of any node never differ by more than one.
+     */
+    public static int checkBalanced(Tree tree) {
+        if(tree == null) {
+            return 0;
+        }
+        int leftHeight = checkBalanced(tree.left);
+        if(leftHeight == -1) {
+            return -1;
+        }
+        int rightHeight = checkBalanced(tree.right);
+        if(rightHeight == -1) {
+            return -1;
+        }
+
+        if(Math.abs(rightHeight - leftHeight) > 1) {
+            return -1;
+        } else {
+            return Math.max(rightHeight, leftHeight) + 1;
+        }
+    }
+
+    public static boolean isBalanced(Tree tree) {
+        if(checkBalanced(tree) == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 4.5
+     * Validate BST: Implement a function to check if a binary tree is a binary search tree.
+     */
+    public static boolean checkBST(Tree tree, Integer min, Integer mx) {
+        if(tree == null) {
+            return true;
+        }
+        if((min != null && tree.data <= min) || (max != null && tree.data > max)) {
+            return false;
+        }
+        if(!checkBST(tree.left, min, tree.data) || !checkBST(tree.right, tree.data, max)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean validateBST(Tree tree) {
+        return checkBST(tree, null, null);
+    }
+
+    /**
+     * 4.6
+     * Successor: Write an algorithm to find the "next" node (i.e., in-order successor) of a given
+     * node in a binary search tree. You may assume that each node has a link to its parent.
+     */
+
+    /**
+     * 4.7
+     * Build Order: You are given a list of projects and a list of dependencies (which is a list of
+     * pairs of projects, where the first project is depenedent on the second project). All of a
+     * project's dependencies must be built before the project is. Find a build order that will
+     * allow the projects to be built. If there is no valid build order, return an error.
+     * EXAMPLE
+     * Input:
+     *  projects: a, b, c, d, e, f
+     *  dependencies: (d,a), (b,f), (d,b), (a,f), (c,d)
+     * Output: f,e,a,b,d,c
+     */
+
 
     public static void main(String[] args) {
         /**
@@ -228,5 +391,12 @@ public class TreesAndGraphs {
 
         DFS(graph);
         BFS(graph);
+
+        // System.out.println(routeBetweenNodes(graph, 4, 5));
+        // System.out.println(routeBetweenNodes(graph, 1, 2));
+
+        // test_listOfDepths();
+
+        System.out.println(isBalanced(tree));
     }
 }
