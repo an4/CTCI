@@ -1,7 +1,9 @@
+import java.lang.StringBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Random;
 
 class Tree {
     Tree left;
@@ -307,7 +309,7 @@ public class TreesAndGraphs {
      * 4.5
      * Validate BST: Implement a function to check if a binary tree is a binary search tree.
      */
-    public static boolean checkBST(Tree tree, Integer min, Integer mx) {
+    public static boolean checkBST(Tree tree, Integer min, Integer max) {
         if(tree == null) {
             return true;
         }
@@ -343,6 +345,182 @@ public class TreesAndGraphs {
      * Output: f,e,a,b,d,c
      */
 
+    /**
+     * 4.8
+     * First Common Ancestor: Design an algorithm and write code to find the the first common
+     * ancestor of two nodes in a binary tree. Avoid storing additional nodes in the data structure.
+     * NOTE: This is not necessarily a binary search tree.
+     */
+    public static boolean hasNode(Tree tree, Tree node) {
+        if(tree == null) {
+            return false;
+        }
+        if(tree == node) {
+            return true;
+        }
+        return hasNode(tree.left, node) || hasNode(tree.right, node);
+    }
+
+    public static Tree commonNode(Tree tree, Tree a, Tree b) {
+        if(tree == null) {
+            return null;
+        }
+        if(tree == a) {
+            return a;
+        }
+        if(tree == b) {
+            return b;
+        }
+
+        boolean aIsOnLeft = hasNode(tree.left, a);
+        boolean bIsOnLeft = hasNode(tree.left, b);
+
+        if(aIsOnLeft != bIsOnLeft) {
+            return tree;
+        }
+
+        Tree childSide = aIsOnLeft ? tree.left : tree.right;
+        return commonNode(childSide, a, b);
+    }
+
+    public static Tree firstCommonAncestor(Tree tree, Tree a, Tree b) {
+        if(!hasNode(tree, a) || !(hasNode(tree, b))) {
+            return null;
+        }
+        return commonNode(tree, a, b);
+    }
+
+    /**
+     * 4.9
+     * BST Sequences: A binary search tree was created by traversing through an array from left to
+     * right and inserting each element. Given a binary search tree with distinct elements, print
+     * all possible arrays that could have led to this tree.
+     * EXAMPLE
+     * Input
+     *      2
+     *    /  \
+     *   1   3
+     * Output {2,1,3},{2,3,1}
+     */
+    // public static HashSet<String> BSTSequences(Tree tree) {
+    //
+    // }
+
+    /**
+     * 4.10
+     * Check Subtree: T1 and T2 are two very large binary trees, with T1 much bigger than T2. Create
+     * an algorithm to determine if T2 is a subtree of T1.
+     * A tree T2 is a subtree of T1 is there exists a node n in T1 such that the subtree of n is
+     * identical to T2. That is, if you cut off the tree at node n, the two trees would be
+     * identical.
+     */
+    public static void inOrderHelper(Tree tree, StringBuilder path) {
+        if(tree == null) {
+            path.append("0");
+            return;
+        }
+        inOrderHelper(tree.left, path);
+        path.append(tree.data);
+        inOrderHelper(tree.right, path);
+    }
+
+    public static String inOrderString(Tree tree) {
+        StringBuilder br = new StringBuilder();
+        inOrderHelper(tree, br);
+        return br.toString();
+    }
+
+    public static void preOrderHelper(Tree tree, StringBuilder path) {
+        if(tree == null) {
+            path.append("0");
+            return;
+        }
+        path.append(tree.data);
+        preOrderHelper(tree.left, path);
+        preOrderHelper(tree.right, path);
+    }
+
+    public static String preOrderString(Tree tree) {
+        StringBuilder br = new StringBuilder();
+        preOrderHelper(tree, br);
+        return br.toString();
+    }
+
+    public static boolean checkSubtree(Tree T1, Tree T2) {
+        if(inOrderString(T1).contains(inOrderString(T2)) &&
+           preOrderString(T1).contains(preOrderString(T2))) {
+            return true;
+        }
+        return false;
+    }
+
+    // Version 2
+
+    public static boolean matchTree(Tree T1, Tree T2) {
+        if(T1 == null && T2 == null) {
+            return true;
+        }
+        if(T1 == null || T2 == null) {
+            return false;
+        }
+        if(T1.data != T2.data) {
+            return false;
+        }
+        return matchTree(T1.left, T2.left) && matchTree(T1.right, T2.right);
+    }
+
+    public static boolean subTree(Tree T1, Tree T2) {
+        if(T1 == null) {
+            return false;
+        }
+        if(T1.data == T2.data && matchTree(T1, T2)) {
+            return true;
+        }
+        return subTree(T1.left, T2) || subTree(T1.right, T2);
+    }
+
+    public static boolean checkSubtree2(Tree T1, Tree T2) {
+        if(T2 == null) {
+            return true;
+        }
+        return subTree(T1, T2);
+    }
+
+    /**
+     * 4.11
+     * Random Node: You are implementing a binary tree class from scratch which, in adition to
+     * insert, find and delete, has a method getRandomNode(), which returns a random node from the
+     * tree. All nodes should be equally likely to be chosen. Desing and implement an algorithm for
+     * getRandomNode, and explain how you would implement the rest of the methods.
+     */
+    public static void treeToArray(Tree tree, ArrayList<Tree> array) {
+        if(tree == null) {
+            return;
+        }
+        treeToArray(tree.left, array);
+        array.add(tree);
+        treeToArray(tree.right, array);
+    }
+
+    public static Tree getRandomNode(Tree tree) {
+        // Copy everything into an array and return a random element. O(n) space and time
+        ArrayList<Tree> array = new ArrayList<Tree>();
+        treeToArray(tree, array);
+        Random rand = new Random();
+        int  n = rand.nextInt(array.size());
+        return array.get(n);
+    }
+
+    /**
+     * 4.12
+     * Paths with Sum: You are given a binary tree in which each node contains an integer value
+     * (which might be positive or negative). Design an algorithm to count the number of paths that
+     * sum to a given value. The path does not need to start or end at the root or a leaf, but it
+     * must go downwards (travelling only from parent nodes to child nodes).
+     */
+    // public static int pathsWithSum(Tree tree) {
+    //
+    // }
 
     public static void main(String[] args) {
         /**
@@ -397,6 +575,12 @@ public class TreesAndGraphs {
 
         // test_listOfDepths();
 
-        System.out.println(isBalanced(tree));
+        // System.out.println(isBalanced(tree));
+
+        // Tree common = firstCommonAncestor(tree, tree.left.left, tree.left.right);
+        // System.out.println("Common Node: "+ common.data);
+
+        Tree randomNode = getRandomNode(tree);
+        System.out.println("Random node: " + randomNode.data);
     }
 }
