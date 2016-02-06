@@ -237,25 +237,141 @@ public class RecursionAndDynamicProgramming {
      * point, and a new color, fill in the surrounding area until the color chnages from the
      * original color.
      */
-    public static void paintFill(int[][] screen, int x, int y, int color) {
-        
+    public static void paintFill_recurse(int[][] screen, int x, int y, int old_color, int new_color) {
+        if(x < 0 || x >= screen[0].length || y < 0 || y >= screen.length) {
+            return;
+        }
+        if(screen[y][x] == old_color) {
+            screen[y][x] = new_color;
+            paintFill_recurse(screen, x-1, y, old_color, new_color);
+            paintFill_recurse(screen, x+1, y, old_color, new_color);
+            paintFill_recurse(screen, x, y-1, old_color, new_color);
+            paintFill_recurse(screen, x, y+1, old_color, new_color);
+        }
     }
+    public static void paintFill(int[][] screen, int x, int y, int color) {
+        paintFill_recurse(screen, x, y, screen[x][y], color);
+        for(int i=0; i<screen.length; i++) {
+            for(int j=0; j<screen[0].length; j++) {
+                System.out.print(screen[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * 8.11
+     * Coins: Given an infinite number of quarters (25 cents), dimes (10 cents), nickels (5 cents),
+     * and pennies (1 cent), write code to calculate the number of ways to represent n cents.
+     */
+    public static int coins(int n) {
+        int[] coins = {1,5,10,25};
+        int[] s = new int[n+1];
+        for(int i=1; i<=n; i++) {
+            for(int j=0; j<coins.length && j<=i; j++) {
+                if(i-coins[j] == 0) {
+                    s[i]++;
+                }
+                if(i-coins[j] > 0) {
+                    s[i] += s[i-coins[j]];
+                }
+            }
+        }
+        return s[n];
+    }
+
+    /**
+     * 8.12
+     * Eight Queens: Write an algorithm to print all ways of arranging eight quenns on a 8x8 chess
+     * board so that none of them share the same row, column, or diagonal. In this case, "diagonal"
+     * means all the diagonals, not just the two tha bisect the board.
+     */
+    public static boolean validPosition(int[] cols, int current, int col) {
+        // check if the column is empty
+        for(int i=0; i<current; i++) {
+            if(cols[i] == col) {
+                return false;
+            }
+        }
+        // check if diagonals are empty
+        for(int i=0; i<current; i++) {
+            if(Math.abs(i - cols[i]) == Math.abs(current-col)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void eightQueens(int row, int[] cols) {
+        if(row == 8) {
+            // Found valid placement
+            System.out.println("Solution: ");
+            for(int i=0; i<8; i++) {
+                for(int j=0; j<8; j++) {
+                    if(cols[i] == j) {
+                        System.out.print("x" + " ");
+                    } else {
+                        System.out.print("_" + " ");
+                    }
+                }
+                System.out.println();
+            }
+        } else {
+            for(int col=0; col<8; col++) {
+                if(validPosition(cols, row, col)) {
+                    cols[row] = col;
+                    eightQueens(row+1, cols);
+                }
+            }
+        }
+    }
+
+    /**
+     * 8.13
+     * Stack of Boxes: You have a stack of n boxes, with widths w_i, heights h_i, and depths d_i.
+     * The boxes cannot be rotated and can only be stacked on top of one another if each box in the
+     * stack is strictly larger than the box above it in width, height, and depth. Implement a
+     * method to compute the height of the tallest possible stack. The height of a stack is the sum
+     * of the heights of each box.
+     */
+    // public static int stackOfBoxes(int[] height, int[] width, int[] depth, int n) {
+    //
+    // }
+
+    /**
+     * 8.14
+     * Boolean Evaluation: Given a boolean expression consisting of the symbols 0 (false), 1 (true),
+     * & (AND), | (OR), and ^ (XOR), and a desired boolean value results, implement a function
+     * to count the number of ways of parenthesizing the expression such that is evaluates to
+     * result.
+     * EXAMPLE
+     * countEval ("1^0|0|1", false) -> 2
+     * countEval ("0&0&0&1^1|0", true) -> 10
+     */
+
 
     public static void main(String[] args) {
         // System.out.println(tripleStep(4));
-        int[] arr = {-1,0,2,6,7,8,9};
-        System.out.println(magicIndex(arr));
-
-        ArrayList<Integer> test = new ArrayList<Integer>();
-        test.add(1);
-        test.add(2);
-        test.add(3);
-        powerSet(test);
+        // int[] arr = {-1,0,2,6,7,8,9};
+        // System.out.println(magicIndex(arr));
+        //
+        // ArrayList<Integer> test = new ArrayList<Integer>();
+        // test.add(1);
+        // test.add(2);
+        // test.add(3);
+        // powerSet(test);
 
         // permutationsWithDups("aabc");
 
-        parens(3);
+        // parens(3);
 
+        // int[][] screen = {{0,1,2,3},{1,1,2,3},{0,0,0,1}};
+        // paintFill(screen, 1, 1, 5);
+
+        // System.out.println(coins(5));
+
+        int[] cols = new int[8];
+        eightQueens(0, cols);
 
     }
 }
