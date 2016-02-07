@@ -305,16 +305,58 @@ public class SortingAndSearching{
      * Input: {5,3,1,2,3}
      * Output: {5,1,3,2,3}
      */
-    
+    // O(nlogn) - for sorting
+    public static void peaksAndValleys_suboptimal(int[] array) {
+        Arrays.sort(array);
+        for(int i=1; i<array.length; i+=2) {
+            int temp = array[i-1];
+            array[i-1] = array[i];
+            array[i] = temp;
+        }
+        for(int i=0; i<array.length; i++) {
+            System.out.print(array[i] + " ");
+        }
+        System.out.println();
+    }
 
+    // Optimal
+    public static int maxIndex(int[] array, int a, int b, int c) {
+        int len = array.length;
+        int aValue = a >= 0 && a < len ? array[a] : Integer.MIN_VALUE;
+        int bValue = b >= 0 && b < len ? array[b] : Integer.MIN_VALUE;
+        int cValue = c >= 0 && c < len ? array[c] : Integer.MIN_VALUE;
 
+        int max = Math.max(aValue, Math.max(bValue, cValue));
+        if(aValue == max) {
+            return a;
+        } else if (bValue == max) {
+            return b;
+        }
+        return c;
+    }
+
+    public static void peaksAndValleys(int[] array) {
+        for(int i=1; i<array.length; i+=2) {
+            int biggestIndex = maxIndex(array, i-1, i, i+1);
+            if(i != biggestIndex) {
+                int temp = array[i];
+                array[i] = array[biggestIndex];
+                array[biggestIndex] = temp;
+            }
+        }
+
+        for(int i=0; i<array.length; i++) {
+            System.out.print(array[i] + " ");
+        }
+        System.out.println();
+    }
 
     public static void main(String[] args) {
         // test_sortedMerge();
         // String[] arr = {"abc","aaaa","cba", "zyx", "ana", "bac", "aan", "naa"};
         // groupAnagrams(arr);
 
-        // int[] arr = {7,8,9,0,1,2,3,4,5,6};
+        int[] arr = {7,8,9,0,1,2,3,4,5,6};
         // System.out.println(searchInRotatedArray(arr, 4));
 
         // int[] arr = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
@@ -323,5 +365,7 @@ public class SortingAndSearching{
 
         // String[] arr =  {"at", "", "", "", "ball", "", "", "car", "", "", "dad", "", ""};
         // System.out.println(sparseSearch(arr, "ball"));
+
+        peaksAndValleys(arr);
     }
 }
