@@ -467,7 +467,153 @@ public class Moderate {
      * pseudo-hit. Write a method that, given a guess and a solution, return the number of hits
      * and pseudo-hits.
      */
+    public static int colorToInt(char c) {
+        switch(c) {
+            case 'R':
+                return 0;
+            case 'Y':
+                return 1;
+            case 'G':
+                return 2;
+            case 'B':
+                return 3;
+            default:
+                return -1;
+        }
+    }
+
     public static void masterMind(String guess, String solution) {
+        char[] g = guess.toCharArray();
+        char[] s = solution.toCharArray();
+
+        int hit = 0;
+        int pseudo = 0;
+
+        int[] col_g = new int[4];
+        int[] col_s = new int[4];
+
+        for(int i=0; i<g.length; i++) {
+            col_g[colorToInt(g[i])]++;
+            col_s[colorToInt(s[i])]++;
+        }
+
+        for(int i=0; i<g.length; i++) {
+            if(g[i] == s[i]) {
+                hit++;
+                col_g[colorToInt(g[i])]--;
+                col_s[colorToInt(s[i])]--;
+            }
+        }
+
+        for(int i=0; i<g.length; i++) {
+            if (solution.contains("" + g[i]) && col_s[colorToInt(g[i])] > 0) {
+                pseudo++;
+                col_g[colorToInt(g[i])]--;
+                col_s[colorToInt(g[i])]--;
+            }
+        }
+
+        System.out.println("Hits: " + hit + "; Pseudo-hits: " + pseudo);
+    }
+
+    /**
+     * 16.16
+     * Sub Sort: Given an array of integers, write a method to find indices m and n such that if you
+     * sorted elements m through n, the entire array would be sorted. Minimize n - m (that is, find
+     * the smallest such sequence).
+     * EXAMPLE
+     * Input: 1, 2, 4, 7, 10, 11, 7, 12, 6, 7, 16, 18, 19
+     * Output (3, 9)
+     */
+    public static int findLastIncreasingFromLeft(int[] array) {
+        int left = 0;
+        while(left < array.length-1 && array[left] < array[left+1]) {
+            left++;
+        }
+        return left;
+    }
+
+    public static int findFirstDecreasingFromRight(int[] array) {
+        int right = array.length-1;
+        while(right > 0 && array[right] > array[right-1]) {
+            right--;
+        }
+        return right;
+    }
+
+    public static int findMinInSection(int[] array, int start, int end) {
+        int min = start;
+        for(int i=start+1; i<end; i++) {
+            if(array[min] > array[i]) {
+                min = i;
+            }
+        }
+        return min;
+    }
+
+    public static int findMaxInSection(int[] array, int start, int end) {
+        int max = start;
+        for(int i=start+1; i<end; i++) {
+            if(array[max] < array[i]) {
+                max = i;
+            }
+        }
+        return max;
+    }
+
+    public static void subSort(int[] array) {
+        int left = findLastIncreasingFromLeft(array);
+        int right = findFirstDecreasingFromRight(array);
+
+        int minMid = findMinInSection(array, left, right+1);
+        int maxMid = findMaxInSection(array, left, right+1);
+
+        int min = array[minMid];
+        int max = array[maxMid];
+
+        int a = 0;
+        int b = array.length-1;
+
+        for(a=0; a<=left && min > array[a]; a++)
+        for(b=right; b<array.length && array[b] > max; b++) {}
+
+        System.out.println("(" + a + "," + (b+1) + ")");
+    }
+
+    /**
+     * 16.17
+     * Contiguous Sequence: You are given an array of integers (both positive and negative). Find the
+     * contiguous sequence with the largest sum. Return the sum.
+     * EXAMPLE
+     * Input: 2, -8, 3, -2, 4, -10
+     * Output: 5 (i.e., {3, -2, 4})
+     */
+    public static int contiguousSequence(int[] array) {
+        int max = 0;
+        int sum = array[0];
+        if(sum > max) {
+            max = sum;
+        }
+        for(int i=1; i<array.length; i++) {
+            sum += array[i];
+            if(sum < 0) {
+                sum = array[i];
+            }
+            if(max < sum) {
+                max = sum;
+            }
+        }
+        return max;
+    }
+
+    /**
+     * 16.18
+     * Pattern Matching: You are given two strings, pattern and value. The pattern string consists
+     * of just the letters a and b. describing a pattern within a string. For example, the strings
+     * catcatgocatgo matches the pattern aabab (where cat is a and go is b). It also matches
+     * patterns like a, ab, and b. Write a value to determine if value matches pattern.
+     */
+    public static boolean patternMatching(String a, String b) {
         
     }
 
@@ -479,6 +625,10 @@ public class Moderate {
         // String[] queries = {"test", "TEXT"};
         // wordFrequencies(book, queries);
         // System.out.println(numberMax(Integer.MAX_VALUE, Integer.MIN_VALUE));
+        // masterMind("GGRR","RGBY");
+
+        // int[] array = {1,2,4,7,10,11,7,12,6,7,16,18,19};
+        // subSort(array);
 
     }
 }
