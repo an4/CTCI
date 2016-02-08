@@ -1,6 +1,7 @@
+import java.lang.StringBuilder;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.StringBuilder;
+import java.util.HashSet;
 
 public class Moderate {
     /**
@@ -267,6 +268,207 @@ public class Moderate {
 
     public static void englishInt(int n) {
         StringBuilder br = new StringBuilder();
+    }
+
+    /**
+     * 16.9
+     * Operations: Write methods to implement the multiply, subtract, and divide operations for
+     * integers. The results of all of these are integeers. Use only he add operator.
+     */
+    // Subtraction
+    public static int negate(int a) {
+        int neg = 0;
+        int newSign = a < 0 ? 1 : -1;
+        while(a != 0) {
+            neg += newSign;
+            a += newSign;
+        }
+        return neg;
+    }
+
+    public static int negate_faster(int a) {
+        int neg = 0;
+        int newSign = a < 0 ? 1 : -1;
+        int delta = newSign;
+        while(a != 0) {
+            boolean differentSigns = (a + delta > 0) != (a > 0);
+            if(a+delta != 0 && differentSigns) {
+                delta = newSign;
+            }
+            neg += delta;
+            a += delta;
+            delta += delta;
+        }
+        return neg;
+    }
+
+    public static int minus(int a, int b) {
+        return a + negate(b);
+    }
+
+    // Multiplication
+    public static int multiply(int a, int b) {
+        if(a < b) {
+            return multiply(b, a);
+        }
+        int sum = 0;
+        for(int i=abs(b); i>0; i = minus(i, 1)) {
+            sum += a;
+        }
+        if(b<0) {
+            sum = negate(sum);
+        }
+        return sum;
+    }
+
+    public static int abs(int a) {
+        if(a<0) {
+            return negate(a);
+        }
+        return a;
+    }
+
+    // Division
+    public static int divide(int a, int b) throws java.lang.ArithmeticException {
+        if(b == 0) {
+            throw new java.lang.ArithmeticException("ERROR");
+        }
+        int absa = abs(a);
+        int absb = abs(b);
+
+        int product = 0;
+        int x = 0;
+        while(product + absb <= absa) {
+            product += absb;
+            x++;
+        }
+
+        if((a < 0 && b < 0) || (a > 0 && b > 0)) {
+            return x;
+        }
+        return negate(x);
+    }
+
+    /**
+     * 16.10
+     * Living People: Given a list of people with their birth and death years, implement a method to
+     * compute the year with the most number of people alive. You may assume that all people were
+     * born between 1900 and 2000 (inclusive). If a person was alive during any portion of the year,
+     * they should be included in that year's count. For example, Person (birth = 1908, death = 1909)
+     * is included in the counts for both 1908 and 1909.
+     */
+    class Person {
+        private Integer birthYear;
+        private Integer deathYear;
+
+        public Person(int b, int d) {
+            this.birthYear = b;
+            this.deathYear = d;
+        }
+
+        public int getBirthYear() {
+            return this.birthYear;
+        }
+
+        public int getDeathyear() {
+            return this.deathYear;
+        }
+    }
+    public static int livingPeople(Person[] people) {
+        int start_year = 1900;
+        int end_year = 2000;
+
+        int[] years = new int[end_year - start_year + 2];
+
+        for(Person person : people) {
+            years[person.getBirthYear() - start_year]++;
+            years[person.getDeathyear() - start_year + 1]++;
+        }
+
+        int max = years[0];
+        for(int i=1; i<years.length-1; i++) {
+            if(max < years[i]) {
+                max = years[i];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * 16.11
+     * Diving Board: You are building a diving board by placing a bunch of planks of wood end-to-end.
+     * There are two types of planks, one of length shorter and one of length longer. You must use
+     * exactly k planks of wood. Write a method to generate all possible lengths of the diving board.
+     */
+    public static int divingBoard(int k, int shorter, int longer) {
+        if(shorter == longer) {
+            return 1;
+        }
+        HashSet<Integer> lengths = new HashSet<Integer>();
+        int shortest = k * shorter;
+        int longest = k * longer;
+        lengths.add(shortest);
+        lengths.add(longest);
+        int current = shortest;
+        for(int i=1; i<k-1; i++) {
+            current -= shorter;
+            current += longer;
+            lengths.add(current);
+        }
+        return lengths.size();
+    }
+
+    /**
+     * 16.12
+     * XML Encoding: Since XML is very verbose, you are given a way of encoding it where each tag
+     * gets mapped to a pre-defined integer value. The language/grammar is as follows:
+     * Element --> Tag Attributes END Children END
+     * Attribute --> Tag Value
+     * END --> 0
+     * Tag --> some predefined mapping to int
+     * Value --> string value END
+     * For example, the following XML might be converted into the compressed string below (assuming
+     * a mapping of family->1, person->2, firstName->3, lastName->4, state->5).
+     * <family lastName="McDowell" state="CA">
+     *    <person firstName="Gayle">Some Message</person>
+     * </family>
+     * 1 4 McDowell 5 CA 0 2 3 Gayle 0 Some Message 0 0.
+     * Write code to print the encoded version of an XML element (passed in Element and Attribute
+     * objects).
+     */
+    // public static String XMLEncoding() {
+    //
+    // }
+
+    /**
+     * 16.13
+     * Bisect Squares: Given two squres on a two-dimensional plane, find a line that would cut these
+     * two squares in half. Assume that the top and the bottom sides of the square run parallel to
+     * the x-axis.
+     */
+
+    /**
+     * 16.14
+     * Best Line: Given a two-dimensional graph with points on it, find a line which passes the most
+     * number of points.
+     */
+
+    /**
+     * 16.15
+     * Master Mind: The game of Master Mind is played as follows:
+     * The computer has four slots, each slot will contain a ball that is red(R), yellow(Y),
+     * green(G) or blue(B). For example, the computer might hame RGGB (Slot #1 is red, Slots #2 and
+     * #3 are green, Slot #4 is blue).
+     * You, the user, are trying to guess the solution. You might, fo example, guess YRGB.
+     * When you guess the correct color for the correct slot, you get a "hit". If you guess a color
+     * that exists but is in the wrong slot, you get a "pseudo-hit". Note that a slot that is a hit
+     * can never count as a pseudo-hit.
+     * For example, if the actual solution is RGBY and you guess GGRR, you have one hit and one
+     * pseudo-hit. Write a method that, given a guess and a solution, return the number of hits
+     * and pseudo-hits.
+     */
+    public static void masterMind(String guess, String solution) {
+        
     }
 
 
