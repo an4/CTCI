@@ -1,7 +1,11 @@
 import java.lang.StringBuilder;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Random;
 
 public class Moderate {
     /**
@@ -613,8 +617,298 @@ public class Moderate {
      * catcatgocatgo matches the pattern aabab (where cat is a and go is b). It also matches
      * patterns like a, ab, and b. Write a value to determine if value matches pattern.
      */
-    public static boolean patternMatching(String a, String b) {
-        
+    public static boolean matches(String pattern, String value, int mainSize, int altSize, int firstAlt) {
+        int stringIndex = mainSize;
+        for(int i=1; 1<pattern.length(); i++) {
+            int size = pattern.charAt(i) == pattern.charAt(0) ? mainSize : altSize;
+            int offset = pattern.charAt(i) == pattern.charAt(0) ? 0 : firstAlt;
+            if(!isEqual(value, offset, stringIndex, size)) {
+                return false;
+            }
+            stringIndex += size;
+        }
+        return true;
+    }
+
+    public static boolean isEqual(String s1, int offset1, int offset2, int size) {
+        for(int i=0; i<size; i++) {
+            if(s1.charAt(offset1 + i) != s1.charAt(offset2 + i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static int countOf(String pattern, char c) {
+        int count = 0;
+        for(int i=0; i<pattern.length(); i++) {
+            if(pattern.charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static boolean patternMatching(String pattern, String value) {
+        if(pattern.length() == 0) return value.length() == 0;
+
+        char mainChar = pattern.charAt(0);
+        char altChar = mainChar == 'a' ? 'b' : 'a';
+        int size = value.length();
+
+        int countOfMain = countOf(pattern, mainChar);
+        int countOfAlt = pattern.length() - countOfMain;
+        int firstAlt = pattern.indexOf(altChar);
+        int maxMainSize = size/countOfMain;
+
+        for(int mainSize = 0; mainSize <= maxMainSize; mainSize++) {
+            int remainingLength = size - mainSize * countOfMain;
+            if(countOfAlt == 0 || remainingLength % countOfAlt == 0) {
+                int altIndex = firstAlt * mainSize;
+                int altSize = countOfAlt == 0 ? 0 : remainingLength / countOfAlt;
+                if(matches(pattern, value, mainSize, altSize, altIndex)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 16.19
+     * Pond Sizes: You have an integer matrix representing a plot of land, where the value at that
+     * location represents the height above sea level. A value of zero indicates water. A pond is
+     * a region of water connected vertically, horizontally, or diagonally. The size of a pond is
+     * the total number of connected water cells. Write a method to compute the sizes of all ponds
+     * in the matrix.
+     * EXAMPLE
+     * Input:
+     *      0 2 1 0
+     *      0 1 0 1
+     *      1 1 0 1
+     *      0 1 0 1
+     * Output: 2,4,1 (in any order)
+     */
+    public static int computeSize(int[][] land, int i, int j) {
+        if(i < 0 || i >= land.length || j < 0 || j >= land[i].length || land[i][j] != 0) {
+            return 0;
+        }
+        int size = 1;
+        land[i][j] = -1;
+
+        size += computeSize(land, i-1, j-1);
+        size += computeSize(land, i-1, j);
+        size += computeSize(land, i-1, j+1);
+        size += computeSize(land, i, j-1);
+        size += computeSize(land, i, j+1);
+        size += computeSize(land, i+1, j-1);
+        size += computeSize(land, i+1, j);
+        size += computeSize(land, i+1, j+1);
+
+        return size;
+    }
+
+    public static ArrayList<Integer> pondSizes(int[][] land) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for(int i=0; i<land.length; i++) {
+            for(int j=0; j<land[i].length; j++) {
+                if(land[i][j] == 0) {
+                    int size = computeSize(land, i, j);
+                    list.add(size);
+                }
+            }
+        }
+        for(Integer size: list) {
+            System.out.print(size + " ");
+        }
+        System.out.println();
+        return list;
+    }
+
+    /**
+     * 16.20
+     * T(: On old cell phones, users typed on a numerical keypad and the phone would provide a list
+     * of words that matched these numbers. Each digit mapped to a set of 0-4 letters. implement
+     * an algorithm to return a list of matching words, given a sequence of digits. You are provided
+     * a list of valid words (provided in whateverdata structure you'd like). The mapping is shown
+     * in the diagram.
+     *  1
+     *  2   abc
+     *  3   def
+     *  4   ghi
+     *  5   jkl
+     *  6   mno
+     *  7   pqrs
+     *  8   tuv
+     *  9   wxyz
+     *  0
+     * EXAMPLE
+     * Input: 8733
+     * Output: tree, used
+     */
+    public static int letterToDigit(char c) {
+        switch(c) {
+            case 'a': case 'b': case 'c':
+                return 2;
+            case 'd': case 'e': case 'f':
+                return 3;
+            case 'g': case 'h': case 'i':
+                return 4;
+            case 'j': case 'k': case 'l':
+                return 5;
+            case 'm': case 'n': case'o':
+                return 6;
+            case 'p': case 'q': case 'r': case 's':
+                return 7;
+            case 't': case 'u': case 'v':
+                return 8;
+            case 'w': case 'x': case 'y': case'z':
+                return 9;
+            default:
+                return -1;
+        }
+    }
+
+    public static String wordToKey(String word) {
+        StringBuilder br = new StringBuilder();
+        for(int i=0; i<word.length(); i++) {
+            int value = letterToDigit(word.charAt(i));
+            if(value == -1) {
+                return null;
+            }
+            br.append(value);
+        }
+        return br.toString();
+    }
+
+    public static HashMap<String, LinkedList<String>> createDictionary(String[] words) {
+        HashMap<String, LinkedList<String>> dictionary = new HashMap<String, LinkedList<String>>();
+        for(String word: words) {
+            String key = wordToKey(word);
+            if(dictionary.containsKey(key)) {
+                LinkedList<String> list = dictionary.get(key);
+                list.add(word);
+            } else {
+                LinkedList<String> list = new LinkedList<String>();
+                list.add(word);
+                dictionary.put(key, list);
+            }
+        }
+        return dictionary;
+    }
+
+    public static void T9(String[] words, String[] codes) {
+        HashMap<String, LinkedList<String>> dictionary = createDictionary(words);
+        for(String code: codes) {
+            LinkedList<String> list = dictionary.get(code);
+            System.out.println("Words for code: " + code);
+            for(String str: list) {
+                System.out.print(str + ", ");
+            }
+            System.out.println();
+        }
+    }
+
+    /**
+     * 16.21
+     * Sum Swap: Given two arrays of integers, fins a pair of values (one from each array) that you
+     * can swap to give the two arrays the same sum.
+     * EXAMPLE
+     * Input: {4,1,2,1,1,2} and {3,6,3,3}
+     * Output: {1,3}
+     */
+    // Using extra memory but O(A + B) time
+    public static void sumSwap(int[] a, int[] b) {
+        int sum_a = a[0];
+        for(int i=1; i<a.length; i++) {
+            sum_a += a[i];
+        }
+
+        int sum_b = b[0];
+        for(int i=1; i<b.length; i++) {
+            sum_b += b[i];
+        }
+
+        int diff = (sum_a - sum_b) / 2;
+
+        HashSet<Integer> set = new HashSet<Integer>();
+        for(int i=0; i<b.length; i++) {
+            set.add(b[i]);
+        }
+
+        for(int i=0; i<a.length; i++) {
+            if(set.contains(a[i] - diff)) {
+                System.out.println("(" + a[i] + "," + (a[i] - diff) + ")");
+                return;
+            }
+        }
+    }
+
+    // No extra memory O(AlogA + BlogB) for sorting
+    public static void sumSwap1(int[] a, int[] b) {
+        int sum_a = a[0];
+        for(int i=1; i<a.length; i++) {
+            sum_a += a[i];
+        }
+
+        int sum_b = b[0];
+        for(int i=1; i<b.length; i++) {
+            sum_b += b[i];
+        }
+
+        int diff = (sum_a - sum_b) / 2;
+
+        Arrays.sort(a);
+        Arrays.sort(b);
+
+        int i = 0;
+        int j = 0;
+        while(i < a.length && j < b.length) {
+            int current_diff = a[i] - b[j];
+            if(current_diff == diff) {
+                System.out.println("Swap1: (" + a[i] + "," + b[j] + ")");
+                return;
+            } else if (current_diff < diff) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+    }
+
+    /**
+     * 16.22
+     * Langton's Ant: An ant is sitting on an infinite grid of white and black squares. It initially
+     * faces right. At each step, it does the following:
+     * (1) At a white space, flip the colour of the square, turn 90 degrees right (clockwise), and
+     * move forward one unit.
+     * (2) At a black square, flip the color of the square, turn 90 degrees left (counter-clockwise),
+     * and move forward one unit.
+     * Write a program to simulate the frist K moves that the ant makes and print the final board as
+     * a grid. Note that you are not provided with the data structure to represent the grid. This is
+     * somehting you must design yourself. The only input to your method is K. You should print the
+     * final grid and return nothing. The method signature might be something like void printKMoves
+     * (int K).
+     */
+
+    /**
+     * 16.23
+     * Rand7 from Rand5: Implement a method rand7 given rans5. That is, given a method that
+     * generates a random number between 0 and 4 (inclusive), write a method that generates a random
+     * number between 0 and 6 (inclusive).
+     */
+    public static int rand5() {
+        Random r = new Random();
+        return r.nextInt(5);
+    }
+
+    public static int rand7() {
+        while(true) {
+            int num = 5 * rand5() + rand5();
+            if(num < 21) {
+                return num % 7;
+            }
+        }
     }
 
 
@@ -629,6 +923,15 @@ public class Moderate {
 
         // int[] array = {1,2,4,7,10,11,7,12,6,7,16,18,19};
         // subSort(array);
+        // System.out.println(patternMatching("catcatgocatgo","aabab"));
+
+        // int[][] land = {{0,2,1,0},{0,1,0,1},{1,1,0,1},{0,1,0,1}};
+        // pondSizes(land);
+
+        // int[] a = {4,1,2,1,1,2};
+        // int[] b = {3,6,3,3};
+        // sumSwap(a,b);
+        // sumSwap1(a,b);
 
     }
 }
