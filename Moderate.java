@@ -911,6 +911,85 @@ public class Moderate {
         }
     }
 
+    /**
+     * 16.24
+     * Pairs with Sum: Design an algorithm to find all pairs of integers withing an array which sum
+     * to a specified value.
+     */
+    // O(n) time and space
+    public static void pairsWithSum(int[] a, int value) {
+        HashSet<Integer> set = new HashSet<Integer>();
+        for(int i=0; i<a.length; i++) {
+            if(set.contains(value-a[i])) {
+                System.out.println("("+a[i]+","+(value-a[i])+")");
+            }
+            set.add(a[i]);
+        }
+    }
+
+    // O(nlogn) time
+    public static void pairsWithSum1(int[] a, int value) {
+        int i = 0;
+        int j = a.length-1;
+        Arrays.sort(a);
+        while(i<j) {
+            if(a[i] + a[j] == value) {
+                System.out.println("("+a[i]+","+a[j]+")");
+                i++;
+                j--;
+            } else if(a[i] + a[j] < value) {
+                i++;
+            } else {
+                j--;
+            }
+        }
+    }
+
+    /**
+     * 16.26
+     * Calculator: Given an arithmetic equation consisting of positive integers, +, -, * and / (no
+     * parentheses), compute the result.
+     * EXAMPLE
+     * Input: 2*3+5/6*3+15
+     * Output 23.5
+     */
+    public static float calculator(String equation) {
+        int last_index = 0;
+        LinkedList<Float> values = new LinkedList<Float>();
+        LinkedList<Character> signs = new LinkedList<Character>();
+        for(int i=1; i<equation.length(); i++) {
+            if(!Character.isDigit(equation.charAt(i))) {
+                float value = Float.parseFloat(equation.substring(last_index,i));
+                if(signs.size() > 0 && (signs.peek() == '/' || signs.peek() == '*')) {
+                    char prev = signs.remove();
+                    float result = values.remove();
+                    if(prev == '/') {
+                        result /= value;
+                    } else {
+                        result *= value;
+                    }
+                    value = result;
+                }
+                values.push(value);
+                last_index = i+1;
+                signs.push(equation.charAt(i));
+            }
+        }
+        float value = Float.parseFloat(equation.substring(last_index,equation.length()));
+        values.push(value);
+
+        Float result = values.remove();
+        for(float a: values) {
+            char sign = signs.remove();
+            if(sign == '+') {
+                result += a;
+            } else {
+                result -= a;
+            }
+        }
+        return result;
+    }
+
 
     public static void main(String[] main) {
         // numberSwapper(10,25);
@@ -932,6 +1011,12 @@ public class Moderate {
         // int[] b = {3,6,3,3};
         // sumSwap(a,b);
         // sumSwap1(a,b);
+
+        // int[] a = {1,3,4,7,9,12,14,15};
+        // pairsWithSum(a, 18);
+        // pairsWithSum1(a, 18);
+
+        // System.out.println(calculator("2*3+5/6*3+15"));
 
     }
 }
