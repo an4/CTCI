@@ -156,7 +156,6 @@ public class Hard {
      * Output John(27), Kris(36)
      */
 
-
     public static void main(String[] args) {
 
     }
